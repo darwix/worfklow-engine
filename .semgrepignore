@@ -1,0 +1,27 @@
+# Go vendor directory
+vendor/
+
+# Go test data
+testdata/
+
+# Build artifacts
+*.exe
+*.test
+*.out
+
+# Dependency directories
+node_modules/
+
+# Git directory
+.git/
+
+# CI/CD
+.github/
+
+# Documentation
+*.md
+*.txt
+
+# Configuration files (optional)
+# *.yml
+# *.yaml

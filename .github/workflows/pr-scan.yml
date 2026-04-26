@@ -1,0 +1,93 @@
+name: PR Scan Workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  # Job 1: Go Unit Tests (no build step per user request)
+  unit-test:
+    name: Go Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Run unit tests
+        run: go test ./... -v
+
+  # Job 2: Go Build Validation (separate job per user feedback)
+  build:
+    name: Go Build Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Build Go code
+        run: go build ./...
+
+  # Job 3: Semgrep Static Analysis (open-source)
+  semgrep:
+    name: Semgrep Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/golang
+            p/security-audit
+            p/secrets
+
+  # Job 4: Trivy Vulnerability Scanner (open-source)
+  trivy:
+    name: Trivy Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+  # Job 5: Free AI Code Reviewer
+  ai-review:
+    name: AI Code Reviewer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run AI Code Reviewer
+        uses: hustcer/ai-code-reviewer@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          openai-token: ${{ secrets.OPENAI_TOKEN || '' }}
+          reviewer: 'gpt-3.5-turbo'
+          exclude: '*.md,*.yml,*.yaml'

@@ -1,0 +1,37 @@
+# Golang Binaries
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test Binary (built with `go test -c`)
+*.test
+
+# Coverage Output
+*.out
+
+# Go Workspace File
+go.work
+
+# Vendor Directory (uncomment if not committing vendor dependencies)
+vendor/
+
+# IDE Files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS Metadata
+.DS_Store
+Thumbs.db
+
+# Temp Files
+*.tmp
+*.log
+
+# Build Artifacts (optional, adjust per project)
+/bin/
+/pkg/
