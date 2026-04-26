@@ -64,4 +64,3 @@ jobs:
         with:
           scan-type: "fs"
           scan-ref: "."
-          trivy-config: trivy.yaml
